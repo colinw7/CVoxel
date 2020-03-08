@@ -109,33 +109,33 @@ readVox(const std::string &filename)
   int nleft = chunk.childBytes;
 
   while (nleft > 0) {
-    Chunk chunk;
+    Chunk chunk1;
 
-    if (! file.readType(chunk))
+    if (! file.readType(chunk1))
       return false;
 
     if (isDebug()) {
-      chunk.print(std::cerr);
+      chunk1.print(std::cerr);
       std::cerr << std::endl;
     }
 
     nleft -= sizeof(Chunk);
 
-    if      (chunk.isName("SIZE")) {
-      assert(chunk.chunkBytes == 12);
+    if      (chunk1.isName("SIZE")) {
+      assert(chunk1.chunkBytes == 12);
 
       if (! file.readType(size_.x) || ! file.readType(size_.y) || ! file.readType(size_.z))
         return false;
     }
-    else if (chunk.isName("XYZI")) {
-      assert(chunk.chunkBytes > 4);
+    else if (chunk1.isName("XYZI")) {
+      assert(chunk1.chunkBytes > 4);
 
       int n;
 
       if (! file.readType(n))
         return false;
 
-      assert(chunk.chunkBytes == 4*(n + 1));
+      assert(chunk1.chunkBytes == 4*(n + 1));
 
       for (int i = 0; i < n; ++i) {
         Voxel v;
@@ -163,8 +163,8 @@ readVox(const std::string &filename)
         voxels_.push_back(v);
       }
     }
-    else if (chunk.isName("RGBA")) {
-      assert(chunk.chunkBytes == 4*256);
+    else if (chunk1.isName("RGBA")) {
+      assert(chunk1.chunkBytes == 4*256);
 
       Color c;
 
@@ -179,15 +179,15 @@ readVox(const std::string &filename)
       }
     }
     else {
-      if (chunk.chunkBytes > 0) {
-        buffer.resize(chunk.chunkBytes);
+      if (chunk1.chunkBytes > 0) {
+        buffer.resize(chunk1.chunkBytes);
 
-        if (! file.read(&buffer[0], chunk.chunkBytes))
+        if (! file.read(&buffer[0], chunk1.chunkBytes))
           return false;
       }
     }
 
-    nleft -= chunk.chunkBytes;
+    nleft -= chunk1.chunkBytes;
   }
 
   //------
@@ -256,7 +256,7 @@ slicePlane(Dir dir, int value, SliceRects &sliceRects) const
   SlicePoints points;
 
   for (const auto &v : voxels()) {
-    int vx, vy, vz;
+    int vx { 0 }, vy { 0 }, vz { 0 };
 
     if      (dir == Dir::X) {
       vx = v.y; vy = v.z; vz = v.x;
@@ -279,7 +279,7 @@ slicePlane(Dir dir, int value, SliceRects &sliceRects) const
 
   typedef CLargestRect<SlicePoints,int> LargestRect;
 
-  int xs, ys;
+  int xs { 0 }, ys { 0 };
 
   if      (dir == Dir::X) {
     xs = ymax();
@@ -347,16 +347,16 @@ outputRaytrace() const
     double cy = rect.getYMin() - ymin();
     double cz = sliceRect.z    - zmin();
 
-    double xs = rect.getWidth ();
-    double ys = rect.getHeight();
-    double zs = 1.0;
+    double xs1 = rect.getWidth ();
+    double ys1 = rect.getHeight();
+    double zs1 = 1.0;
 
     CRGBA c = color(sliceRect.c);
 
     std::string color = c.getRGB().stringEncode();
 
     std::cout << "<box " <<
-     "size=\"" << xs << "," << ys << "," << zs << "\" " <<
+     "size=\"" << xs1 << "," << ys1 << "," << zs1 << "\" " <<
      "translate=\"" << cx << "," << cy << "," << cz << "\" " <<
      "color=\"" << color << "\"/>" << std::endl;
   }
