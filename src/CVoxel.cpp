@@ -81,7 +81,7 @@ readVox(const std::string &filename)
   if (! file.read(&buffer[0], 4))
     return false;
 
-  if (strncmp((const char *) &buffer[0], "VOX ", 4) != 0)
+  if (strncmp(reinterpret_cast<const char *>(&buffer[0]), "VOX ", 4) != 0)
     return false;
 
   int version;
@@ -119,7 +119,7 @@ readVox(const std::string &filename)
       std::cerr << std::endl;
     }
 
-    nleft -= sizeof(Chunk);
+    nleft -= int(sizeof(Chunk));
 
     if      (chunk1.isName("SIZE")) {
       assert(chunk1.chunkBytes == 12);
@@ -194,8 +194,10 @@ readVox(const std::string &filename)
 
   if (colors_.empty()) {
     for (int i = 0; i < 256; ++i) {
-      Color c(default_palette[4*i + 0], default_palette[4*i + 1],
-              default_palette[4*i + 2], default_palette[4*i + 3]);
+      Color c(uchar(default_palette[4*i + 0]),
+              uchar(default_palette[4*i + 1]),
+              uchar(default_palette[4*i + 2]),
+              uchar(default_palette[4*i + 3]));
 
       colors_.push_back(c);
     }
@@ -351,7 +353,7 @@ outputRaytrace() const
     double ys1 = rect.getHeight();
     double zs1 = 1.0;
 
-    CRGBA c = color(sliceRect.c);
+    CRGBA c = color(uchar(sliceRect.c));
 
     std::string color = c.getRGB().stringEncode();
 
