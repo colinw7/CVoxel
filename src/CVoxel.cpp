@@ -74,6 +74,13 @@ readVox(const std::string &filename)
 
   file.open(CFile::Mode::READ);
 
+  return readVox(file);
+}
+
+bool
+CVoxel::
+readVox(CFile &file)
+{
   std::vector<uchar> buffer;
 
   buffer.resize(4);
@@ -210,10 +217,10 @@ void
 CVoxel::
 toSliceRects(SliceRects &sliceRects) const
 {
-  typedef CLargestRect<SlicePoints,int> LargestRect;
+  using LargestRect = CLargestRect<SlicePoints, int>;
 
   // add slice points (set points per z)
-  typedef std::map<int,SlicePoints> ISlicePoints;
+  using ISlicePoints = std::map<int, SlicePoints>;
 
   ISlicePoints slicePoints;
 
@@ -279,7 +286,7 @@ slicePlane(Dir dir, int value, SliceRects &sliceRects) const
 
   //---
 
-  typedef CLargestRect<SlicePoints,int> LargestRect;
+  using LargestRect = CLargestRect<SlicePoints, int>;
 
   int xs { 0 }, ys { 0 };
 
@@ -299,7 +306,7 @@ slicePlane(Dir dir, int value, SliceRects &sliceRects) const
   LargestRect largestRect(points, xs + 1, ys + 1);
 
   for (const auto &c : points.colors()) {
-    LargestRect::Rect lrect = largestRect.largestRect(c);
+    auto lrect = largestRect.largestRect(c);
 
     while (lrect.isValid()) {
       CIBBox2D rect(lrect.left, lrect.top,

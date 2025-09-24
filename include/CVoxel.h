@@ -1,14 +1,16 @@
 #ifndef CVoxel_H
 #define CVoxel_H
 
+#include <CFile.h>
 #include <CIBBox2D.h>
 #include <CRGBA.h>
+
 #include <map>
 #include <set>
 #include <vector>
 #include <string>
 
-typedef unsigned char uchar;
+using uchar = unsigned char;
 
 class CVoxel {
  public:
@@ -35,7 +37,7 @@ class CVoxel {
     }
   };
 
-  typedef std::vector<Voxel> Voxels;
+  using Voxels = std::vector<Voxel>;
 
   //---
 
@@ -47,15 +49,15 @@ class CVoxel {
     }
   };
 
-  typedef std::vector<Color> Colors;
+  using Colors = std::vector<Color>;
 
   //---
 
   class SlicePoints {
    public:
-    typedef std::map<int,int>     YColors;
-    typedef std::map<int,YColors> XYColors;
-    typedef std::set<int>         Colors;
+    using YColors  = std::map<int, int>;
+    using XYColors = std::map<int, YColors>;
+    using Colors   = std::set<int>;
 
    public:
     SlicePoints() { }
@@ -101,7 +103,7 @@ class CVoxel {
     int      c { -1 };
   };
 
-  typedef std::vector<SliceRect> SliceRects;
+  using SliceRects = std::vector<SliceRect>;
 
   //---
 
@@ -112,6 +114,7 @@ class CVoxel {
   void setDebug(bool b) { debug_ = b; }
 
   bool readVox(const std::string &filename);
+  bool readVox(CFile &file);
 
   const Voxels &voxels() const { return voxels_; }
 
